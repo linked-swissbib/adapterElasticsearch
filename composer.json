@@ -1,0 +1,29 @@
+{
+    "name": "swissbib/elasticsearchAdapter",
+    "description": "component to access ES targets",
+    "authors": [
+        {
+            "name": "Guenter Hipler",
+            "email": "guenter.hipler@unibas.ch",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://www.swissbib.ch",
+    "license": "GPL-2.0",
+    "support": {
+        "issues": "https://github.com/swissbib/"
+    },
+    "require": {
+        "php": ">=7.0",
+        "elasticsearch/elasticsearch": "~2.0",
+        "ongr/elasticsearch-dsl": "2.1.0"
+
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-0": {
+            "ElasticsearchAdapter": "src/"
+        }
+    }
+}
