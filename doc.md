@@ -40,21 +40,21 @@ templates:
   document:
     index: testsb
     type: document
-      query: 
-        bool:
-          should:
-            local: {local}
-            contributor: {contributor}
-            issued: {issued}
-            modified: {modified}
-            primaryTopic: {primaryTopic}
+    query: 
+      bool:
+        should:
+          local: {local}
+          contributor: {contributor}
+          issued: {issued}
+          modified: {modified}
+          primaryTopic: {primaryTopic}
 
   document_id:
     index: testsb
     type: document
-      query: 
-        ids:
-          values: {id}
+    query: 
+      ids:
+        values: {id}
 ```
 
 # Usage
