@@ -55,6 +55,19 @@ templates:
     query: 
       ids:
         values: {id}
+        
+        
+  example:
+    index: testsb
+    type: document
+    query: 
+      match:
+        _all: {q}
+    filter: 
+      term: 
+        name: {name}
+    aggregation:
+      something: {some}
 ```
 
 # Usage
