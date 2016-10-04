@@ -48,6 +48,7 @@ templates:
           issued: {issued}
           modified: {modified}
           primaryTopic: {primaryTopic}
+          _all: {q}
 
   document_id:
     index: testsb
