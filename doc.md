@@ -137,3 +137,11 @@ $adapter->search($query, $params);
   https://github.com/linked-swissbib/vufind/blob/feature/getTogether/local/config/vufind/searchspecsES.yaml#L90
   (es gibt noch weitere Arten von diesen Typen). Damit ist es möglich, einen oder mehrere Suchterme auf meherer Indexfelder gleichzeitig zu mappen. Das hatte ich für ES mal so begonnen (s. Beipiel) und wurde auch von Chur benutzt. Fände es gut, wenn wir eine solche Möglichkeit auch bei uns integrieren. (es würde wohl auch vereinfachen)
   
+### MM
+
+  * Den Typ cross_fields habe ich nicht gekannt, ich denke das sollten wir aber sicherlich unterstützen. 
+  So wie ich das sehe ist das aber eher eine Alternative zum Feld _all. Die Konfiguration, wie ich sie eingetragen habe
+  würde eine Suche à la lobid erlauben, indem mit dem Parameter {name} nach name gesucht wird und im Feld modified nach {modified} und 
+  nicht in beiden Feldern nach beidem.
+  * Was mir aus dem Code nicht ganz klar wird, ist wie du die Parameter ins Query einfügst, kannst du mir da noch auf die Sprünge helfen?
+  Wenn du z.B. ein match Query machst, wo werden da die Suchparameter (z.B. name="Markus") in das Query eingefügt?
