@@ -2,6 +2,7 @@
 namespace ElasticsearchAdapter;
 
 use ElasticsearchAdapter\Config\Config;
+use ElasticsearchAdapter\Connector\Connector;
 use ElasticsearchAdapter\Params\Params;
 use ElasticsearchAdapter\Query\Query;
 
@@ -15,16 +16,16 @@ use ElasticsearchAdapter\Query\Query;
 class Adapter
 {
     /**
-     * @var Config
+     * @var Connector
      */
-    protected $config;
+    protected $connector;
 
     /**
      * Adapter constructor.
      */
-    public function __construct($config)
+    public function __construct(Connector $connector)
     {
-        $this->config = $config;
+        $this->connector = $connector;
     }
 
     /**
@@ -35,6 +36,16 @@ class Adapter
      */
     public function search(Query $query, Params $params) : array
     {
-        return [];
+        $builtQuery = $query->getQuery();
+        $queryString = json_encode($builtQuery);
+
+        foreach ($params as $name => $value) {
+            $queryString = str_replace('{{' . $name . '}}', $value, $queryString);
+        }
+
+        $queryString = preg_replace('{{[a-z]*}}', '', preg_replace('{{[a-z]*}}', '', $queryString));
+        $boundQuery = json_decode($queryString, true);
+
+        return $this->connector->send($boundQuery);
     }
 }

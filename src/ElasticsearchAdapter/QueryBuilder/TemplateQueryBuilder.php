@@ -1,6 +1,9 @@
 <?php
 namespace ElasticsearchAdapter\QueryBuilder;
+
+use ElasticsearchAdapter\Query\TemplateQuery;
 use ElasticsearchAdapter\Query\Query;
+use InvalidArgumentException;
 
 /**
  * TemplateQueryBuilder interface
@@ -28,13 +31,15 @@ class TemplateQueryBuilder implements QueryBuilder
      * @param string $template
      *
      * @return Query
+     *
+     * @throws InvalidArgumentException if template is not found
      */
     public function buildQueryFromTemplate(string $template) : Query
     {
         if (!isset($this->templates[$template])) {
-            throw new \InvalidArgumentException('No template with name "' . $template . '" found.');
+            throw new InvalidArgumentException('No template with name "' . $template . '" found.');
         }
 
-        return null;
+        return new TemplateQuery($this->templates[$template]);
     }
 }

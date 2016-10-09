@@ -1,6 +1,8 @@
 <?php
 namespace ElasticsearchAdapter\Params;
 
+use Iterator;
+
 /**
  * Params interface
  *
@@ -8,7 +10,7 @@ namespace ElasticsearchAdapter\Params;
  * @license  http://opensource.org/licenses/gpl-2.0.php
  * @link     http://linked.swissbib.ch
  */
-interface Params
+interface Params extends Iterator
 {
     /**
      * @param string $name
@@ -21,9 +23,9 @@ interface Params
      * @param string $name
      * @param string $value
      *
-     * @return void
+     * @return Params
      */
-    public function set(string $name, string $value);
+    public function set(string $name, string $value) : Params;
 
     /**
      * @param string $name
@@ -35,7 +37,7 @@ interface Params
     /**
      * @param string $name
      *
-     * @return void
+     * @return Params
      */
-    public function remove(string $name);
+    public function remove(string $name) : Params;
 }

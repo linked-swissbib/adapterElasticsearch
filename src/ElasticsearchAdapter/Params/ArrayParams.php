@@ -1,6 +1,8 @@
 <?php
 namespace ElasticsearchAdapter\Params;
 
+use ArrayIterator;
+
 /**
  * ArrayParams
  *
@@ -8,27 +10,24 @@ namespace ElasticsearchAdapter\Params;
  * @license  http://opensource.org/licenses/gpl-2.0.php
  * @link     http://linked.swissbib.ch
  */
-class ArrayParams implements Params
+class ArrayParams extends ArrayIterator implements Params
 {
-    /**
-     * @var array
-     */
-    protected $params = [];
-
     /**
      * @inheritdoc
      */
     public function get(string $name) : string
     {
-        return $this->params[$name] ?? null;
+        return $this->offsetGet($name) ?? null;
     }
 
     /**
      * @inheritdoc
      */
-    public function set(string $name, string $value)
+    public function set(string $name, string $value) : Params
     {
-        $this->params[$name] = $value;
+        $this->offsetSet($name, $value);
+
+        return $this;
     }
 
     /**
@@ -36,16 +35,18 @@ class ArrayParams implements Params
      */
     public function has(string $name) : bool
     {
-        return isset($this->params[$name]);
+        return $this->offsetExists($name);
     }
 
     /**
      * @inheritdoc
      */
-    public function remove(string $name)
+    public function remove(string $name) : Params
     {
-        if (isset($this->params[$name])) {
-            unset($this->params[$name]);
+        if ($this->offsetExists($name)) {
+            $this->offsetUnset($name);
         }
+
+        return $this;
     }
 }
