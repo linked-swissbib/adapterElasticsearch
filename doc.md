@@ -145,3 +145,9 @@ $adapter->search($query, $params);
   nicht in beiden Feldern nach beidem.
   * Was mir aus dem Code nicht ganz klar wird, ist wie du die Parameter ins Query einfügst, kannst du mir da noch auf die Sprünge helfen?
   Wenn du z.B. ein match Query machst, wo werden da die Suchparameter (z.B. name="Markus") in das Query eingefügt?
+  Die Implementierung, wie ich das im Moment im Branch develop mache, kann sicher nicht so bleiben, ich denke ich muss die Parameter bereits beim
+  Builden des Queries fix einfügen. 
+  * Bezüglich "Advanced Search" mittels ES Query-DSL: Ich denke das wäre durchaus eine Möglichkeit, die dem Client maximale Flexibilität bietet. 
+  Ich weiss allerdings nicht, ob wir noch gross Zeit haben dies zu entwickeln, evtl. können wir es auch einfach konzeptionell mal aufnehmen. Ich denke, 
+  wenn man diese Anfragen mehr oder weniger eins zu eins an den Elasticsearch Server weitergibt, dass man dann sehr gut aufpassen muss, dass der Client
+  nur Dinge machen kann, die er auch darf. Für unser Projekt sehe ich erstmal die Priorität so, dass wir eine Schnittstelle à la lobid.org anbienten können.
