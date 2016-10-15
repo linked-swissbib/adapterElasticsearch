@@ -1,6 +1,7 @@
 <?php
 namespace ElasticsearchAdapter\Query;
 
+use ElasticsearchAdapter\Params\Params;
 use InvalidArgumentException;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
@@ -35,6 +36,11 @@ class TemplateQuery implements Query
     protected $search = null;
 
     /**
+     * @var Params
+     */
+    protected $params = null;
+
+    /**
      * @var array
      */
     protected $boolQueryConfigToConst = [
@@ -64,14 +70,24 @@ class TemplateQuery implements Query
     }
 
     /**
+     * @inheritdoc
+     */
+    public function build()
+    {
+        $this->query = $this->buildQuery();
+    }
+
+    /**
      * @return array
      */
     protected function buildQuery()
     {
         $this->search = new Search();
 
-        foreach ($this->template['query'] as $type => $config) {
-            $this->search->addQuery($this->buildQueryClause($type, $config));
+        if (isset($this->template['query'])) {
+            foreach ($this->template['query'] as $type => $config) {
+                $this->search->addQuery($this->buildQueryClause($type, $config));
+            }
         }
 
         if (isset($this->template['filter'])) {
@@ -81,8 +97,8 @@ class TemplateQuery implements Query
         }
 
         $searchParams = [
-            'index' => $this->template['index'],
-            'type' => $this->template['type'],
+            'index' => $this->replaceParams($this->template['index']),
+            'type' =>  $this->replaceParams($this->template['type']),
             'body' => $this->search->toArray(),
         ];
 
@@ -120,7 +136,8 @@ class TemplateQuery implements Query
      */
     protected function buildIdsQueryClause(array $query) : IdsQuery
     {
-        $idsQuery = new IdsQuery($query['values']);
+        $values = $this->replaceParams($query['values']);
+        $idsQuery = new IdsQuery($values);
 
         return $idsQuery;
     }
@@ -145,7 +162,25 @@ class TemplateQuery implements Query
      */
     protected function buildMultiMatchQueryClause(array $config) : MultiMatchQuery
     {
-        $multiMatchQuery = new MultiMatchQuery($config['query'], $config['fields']);
+        $query = $this->replaceParams($config['query']);
+
+        $replacedFields = $this->replaceParams($config['fields']);
+
+        if (empty($replacedFields)) {
+            $fields = ['_all'];
+        } else {
+            $fields =  explode(',', $this->replaceParams($config['fields']));
+        }
+
+        $parameters = [];
+
+        foreach ($config as $key => $value) {
+            if (!in_array($key, ['query', 'fields'])) {
+                $parameters[$key] = $this->replaceParams($value);
+            }
+        }
+
+        $multiMatchQuery = new MultiMatchQuery($fields, $query, $parameters);
 
         return $multiMatchQuery;
     }
@@ -202,5 +237,61 @@ class TemplateQuery implements Query
     protected function buildFilterClause(string $type, array $config) : BuilderInterface
     {
         return $this->buildQueryClause($type, $config);
+    }
+
+    /**
+     * @return Params
+     */
+    public function getParams(): Params
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param Params $params
+     */
+    public function setParams(Params $params)
+    {
+        $this->params = $params;
+    }
+
+    /**
+     * @param string|array $raw
+     *
+     * @return string|array
+     */
+    protected function replaceParams($raw)
+    {
+        if (is_array($raw)) {
+            $replaced = [];
+
+            foreach ($raw as $key => $value) {
+                $matches = [];
+
+                if (preg_match('/^{(\w*)}$/', $value, $matches)) {
+                    $variableName = $matches[1];
+
+                    if ($this->params->has($variableName)) {
+                        $replaced[$key] = $this->params->get($variableName);
+                    }
+                }
+            }
+
+            return $replaced;
+        } elseif (is_string($raw)) {
+            $matches = [];
+
+            if (preg_match('/^{(\w*)}$/', $raw, $matches)) {
+                $variableName = $matches[1];
+
+                if ($this->params->has($variableName)) {
+                    return $this->params->get($variableName);
+                }
+            } else {
+                return $raw;
+            }
+        }
+
+        return '';
     }
 }

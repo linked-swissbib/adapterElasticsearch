@@ -21,7 +21,7 @@ class Adapter
     protected $connector;
 
     /**
-     * Adapter constructor.
+     * @param Connector $connector
      */
     public function __construct(Connector $connector)
     {
@@ -36,16 +36,6 @@ class Adapter
      */
     public function search(Query $query, Params $params) : array
     {
-        $builtQuery = $query->getQuery();
-        $queryString = json_encode($builtQuery);
-
-        foreach ($params as $name => $value) {
-            $queryString = str_replace('{{' . $name . '}}', $value, $queryString);
-        }
-
-        $queryString = preg_replace('{{[a-z]*}}', '', preg_replace('{{[a-z]*}}', '', $queryString));
-        $boundQuery = json_decode($queryString, true);
-
-        return $this->connector->send($boundQuery);
+        return $this->connector->send($query->getQuery());
     }
 }

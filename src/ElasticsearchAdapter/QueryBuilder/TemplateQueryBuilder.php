@@ -1,6 +1,7 @@
 <?php
 namespace ElasticsearchAdapter\QueryBuilder;
 
+use ElasticsearchAdapter\Params\Params;
 use ElasticsearchAdapter\Query\TemplateQuery;
 use ElasticsearchAdapter\Query\Query;
 use InvalidArgumentException;
@@ -20,11 +21,18 @@ class TemplateQueryBuilder implements QueryBuilder
     protected $templates = [];
 
     /**
-     * @param array $templates
+     * @var Params
      */
-    public function __construct(array $templates)
+    protected $params;
+
+    /**
+     * @param array $templates
+     * @param Params $params
+     */
+    public function __construct(array $templates, Params $params = null)
     {
         $this->templates = $templates;
+        $this->params = $params;
     }
 
     /**
@@ -40,6 +48,30 @@ class TemplateQueryBuilder implements QueryBuilder
             throw new InvalidArgumentException('No template with name "' . $template . '" found.');
         }
 
-        return new TemplateQuery($this->templates[$template]);
+        $templateQuery = new TemplateQuery($this->templates[$template]);
+
+        if ($this->params !== null) {
+            $templateQuery->setParams($this->params);
+        }
+
+        $templateQuery->build();
+
+        return $templateQuery;
+    }
+
+    /**
+     * @return Params
+     */
+    public function getParams(): Params
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param Params $params
+     */
+    public function setParams(Params $params)
+    {
+        $this->params = $params;
     }
 }

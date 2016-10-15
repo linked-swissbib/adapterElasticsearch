@@ -14,4 +14,9 @@ interface Query
      * @return array
      */
     public function getQuery() : array;
+
+    /**
+     * @return void
+     */
+    public function build();
 }
