@@ -12,7 +12,7 @@ use ONGR\ElasticsearchDSL\Query\TermQuery;
 use ONGR\ElasticsearchDSL\Search;
 
 /**
- * OngrQuery
+ * TemplateQuery
  *
  * @author   Guenter Hipler <guenter.hipler@unibas.ch>, Markus Mächler <markus.maechler@students.fhnw.ch>
  * @license  http://opensource.org/licenses/gpl-2.0.php
@@ -102,6 +102,14 @@ class TemplateQuery implements Query
             'body' => $this->search->toArray(),
         ];
 
+        if (isset($this->template['size'])) {
+            $searchParams['size'] = $this->replaceParams($this->template['size']);
+        }
+
+        if (isset($this->template['from'])) {
+            $searchParams['from'] = $this->replaceParams($this->template['from']);
+        }
+
         return $searchParams;
     }
 
@@ -149,8 +157,9 @@ class TemplateQuery implements Query
      */
     protected function buildMatchQueryClause(array $config) : MatchQuery
     {
+        //todo do we need parameters? what should the template syntax be?
         $name = key($config);
-        $matchQuery = new MatchQuery($name, $config[$name]);
+        $matchQuery = new MatchQuery($name, $this->replaceParams($config[$name]));
 
         return $matchQuery;
     }
@@ -163,15 +172,7 @@ class TemplateQuery implements Query
     protected function buildMultiMatchQueryClause(array $config) : MultiMatchQuery
     {
         $query = $this->replaceParams($config['query']);
-
-        $replacedFields = $this->replaceParams($config['fields']);
-
-        if (empty($replacedFields)) {
-            $fields = ['_all'];
-        } else {
-            $fields =  explode(',', $this->replaceParams($config['fields']));
-        }
-
+        $fields = explode(',', $this->replaceParams($config['fields']));
         $parameters = [];
 
         foreach ($config as $key => $value) {
@@ -242,7 +243,7 @@ class TemplateQuery implements Query
     /**
      * @return Params
      */
-    public function getParams(): Params
+    public function getParams() : Params
     {
         return $this->params;
     }
@@ -287,11 +288,19 @@ class TemplateQuery implements Query
                 if ($this->params->has($variableName)) {
                     return $this->params->get($variableName);
                 }
-            } else {
-                return $raw;
             }
         }
 
-        return '';
+        return $raw;
+    }
+
+    /**
+     * @param string $param
+     *
+     * @return bool
+     */
+    protected function isParam($param) : bool
+    {
+        return is_string($param) && preg_match('/^{(\w*)}$/', $param);
     }
 }

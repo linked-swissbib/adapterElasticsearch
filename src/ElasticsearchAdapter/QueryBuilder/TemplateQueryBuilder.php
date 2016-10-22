@@ -62,7 +62,7 @@ class TemplateQueryBuilder implements QueryBuilder
     /**
      * @return Params
      */
-    public function getParams(): Params
+    public function getParams() : Params
     {
         return $this->params;
     }
