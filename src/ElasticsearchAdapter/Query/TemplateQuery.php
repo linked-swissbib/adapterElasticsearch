@@ -46,7 +46,8 @@ class TemplateQuery implements Query
     protected $boolQueryConfigToConst = [
         'must' => BoolQuery::MUST,
         'must_not' => BoolQuery::MUST_NOT,
-        'should' => BoolQuery::SHOULD
+        'should' => BoolQuery::SHOULD,
+        'filter' => BoolQuery::FILTER
     ];
 
     /**
