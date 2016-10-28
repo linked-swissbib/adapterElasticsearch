@@ -3,11 +3,10 @@ namespace ElasticsearchAdapter\QueryBuilder;
 
 use ElasticsearchAdapter\Params\ArrayParams;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * TemplateQueryBuilder interface
+ * TemplateQueryBuilderTest
  *
  * @author   Guenter Hipler <guenter.hipler@unibas.ch>, Markus Mächler <markus.maechler@students.fhnw.ch>
  * @license  http://opensource.org/licenses/gpl-2.0.php
