@@ -1,7 +1,8 @@
 <?php
-namespace ElasticsearchAdapter\QueryBuilder;
+namespace Tests\ElasticsearchAdapter\QueryBuilder;
 
 use ElasticsearchAdapter\Params\ArrayParams;
+use ElasticsearchAdapter\QueryBuilder\TemplateQueryBuilder;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 
