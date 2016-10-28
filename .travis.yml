@@ -12,4 +12,4 @@ before_script:
 script:
     - composer install -n
     - phpcs -n --standard=PSR2 src
-#    - phpunit
+    - phpunit

@@ -1,0 +1,13 @@
+match:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    match:
+      _all: 'test query'
+
+match_with_variables:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    match:
+      _all: '{q}'
