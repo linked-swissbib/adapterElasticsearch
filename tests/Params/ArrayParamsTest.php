@@ -24,6 +24,7 @@ class ArrayParamsTest extends TestCase
 
         $this->assertEquals('value a', $params->get('a'));
         $this->assertEquals('value b', $params->get('b'));
+        $this->assertNull($params->get('not a name'));
     }
 
     /**

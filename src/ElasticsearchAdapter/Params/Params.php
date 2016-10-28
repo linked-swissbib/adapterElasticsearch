@@ -15,9 +15,9 @@ interface Params extends Iterator
     /**
      * @param string $name
      *
-     * @return string
+     * @return string|null
      */
-    public function get(string $name) : string;
+    public function get(string $name);
 
     /**
      * @param string $name

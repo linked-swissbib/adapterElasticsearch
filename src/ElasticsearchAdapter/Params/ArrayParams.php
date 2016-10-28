@@ -15,9 +15,9 @@ class ArrayParams extends ArrayIterator implements Params
     /**
      * @inheritdoc
      */
-    public function get(string $name) : string
+    public function get(string $name)
     {
-        return $this->offsetGet($name) ?? null;
+        return $this->offsetExists($name) ? $this->offsetGet($name) : null;
     }
 
     /**
