@@ -20,8 +20,7 @@ before_script:
 script:
     - composer install -n
     - phpcs -n --standard=PSR2 src
-    - phpdbg -qrr -dmemory_limit=-1 "$(phpenv which phpunit)" --coverage-php build/cov/coverage-phpunit.cov
-    - phpdbg -qrr phpcov.phar merge --clover build/logs/clover.xml build/cov
+    - phpunit --coverage-clover build/logs/clover.xml
 
 after_success:
     - travis_retry php coveralls.phar -v
