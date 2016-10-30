@@ -151,3 +151,24 @@ $adapter->search($query, $params);
   Ich weiss allerdings nicht, ob wir noch gross Zeit haben dies zu entwickeln, evtl. können wir es auch einfach konzeptionell mal aufnehmen. Ich denke, 
   wenn man diese Anfragen mehr oder weniger eins zu eins an den Elasticsearch Server weitergibt, dass man dann sehr gut aufpassen muss, dass der Client
   nur Dinge machen kann, die er auch darf. Für unser Projekt sehe ich erstmal die Priorität so, dass wir eine Schnittstelle à la lobid.org anbienten können.
+
+### GH
+  * zu Punkt 1 und 2:
+  Feld _all und cross_fields würde ich nicht gleich setzen obwohl sie auf den ersten Blick so wirken. _all ist, so würde ich das einordnen eine Hilfskonstruktion von Elasticsearch um über die gesamte Struktur des Satzen suchen zu können. Man sollte es eigentlich nur im schnellen development verwenden. Ein Problem von _all: Du kannst keine Analyser verwenden. Damit ist die Suche auf einem sehr tiefen Niveau. Wenn man jedoch auf einezelnen Feldern sucht, so können diese Felder einer bestimmten Textanalyse unterzogen werden. Das gibt einem sehr viel mehr Möglichkeiten die Terme aufzubereiten. Der Trick beim cross_fields (es gibt noch mehr davon) ist nun, dass Du nicht einzelne Feldnamen angeben musst und diese in der Art von key-value pairs verknüpfst sondern Du gibst mit dem key fields an über welche Felder Du suchen möchtest und im key query die von Benutzer angegeben Suche (Beispiel: https://www.elastic.co/guide/en/elasticsearch/guide/current/_cross_fields_queries.html ) Damit würden wir uns die Feldnamen, wie sie von lobid verwendet werden, sparen und könnten in einer Konfiguration flexibel angeben, über welche Felder bei einem Typ gesucht werden soll. 
+  Was wir brauchen ist die Angabe im Query-Teil der URL, welcher Teil der Konfiguration für die Suche verwendet werden soll (Bei VuFind wird diese Angabe SearchHandler genannt. Beispiel: https://www.swissbib.ch/Search/Results?lookfor=Polit,%20Denise%20F.&type=Author hier wird aus der Konfiguration der Teil Author genommen. https://github.com/swissbib/vufind/blob/master/local/config/vufind/searchspecs.yaml#L99 
+  Die Idee meines Entwurfs war dann, durch die Angabe eines solchen Werts den entsprechenden Teil der Konfiguration wählen kann. Diese gibt dann komplett an, wie die Suche aufgebaut werden kann. Weiss nicht, ob ich das hier vernünftig erklären kann.
+  Als ein Vorschlag (mit dem Ziel der Vereinfachung und das es nicht zu kompliziert wird)
+    * die Suchen werden so aufgebaut
+    data.swissbib.ch/bibliographicResource/q=hello world[weietere wie bei lobid u.a. zur Angabe des Formats]
+    bibliographicResource als Teil der URL bestimmt den "SearchHandler" der Konfiguration. Mit der Definition aus der Konfiguration kann dann die DSL aufgebaut werden. q ist der Wert für die Suche
+    Damit würden wir uns die Agaben von einzelnen Feldnamen, wie es lobid macht, sparen und könnten uns darauf konzentrieren, die Suche nach Massgabe der Konfiguration aufzubauen. 
+    Wenn man spezifizierte Suchen für bibliographicResource haben möchte, könnte man z.B. angeben
+    data.swissbib.ch/bibliographicResource/q=hello world[weietere wie bei lobid u.a. zur Angabe des Formats]&handler=xxx
+
+  * Durchreichen der DSL
+  Ja man muss schon aufpassen was man macht. Aber: über die REST Schnittstelle steuern wir ja schon, dass nur auf den _search Endpunkt zugegriffen wird und nicht auf andere, mit denen man Unheil anrichten könnte. Im Moment sehe ich keinen Fall, wo dies zu Schwierigkeiten führen würde
+  
+  * zur Zeit:
+  ich habe aus den Augen verloren, wann Ihr mit der Arbeit fertig sein müsst. Ich denke wir sollten wieder einmal gemeinsam ein Zeitmanagement aufstellen.
+  * nicht gut für die Arbeit ist, dass ich nächste Woche für eine Woche in den Ferien bin. Aber ich brauche auch mal ein paar freie Tage...
+  
