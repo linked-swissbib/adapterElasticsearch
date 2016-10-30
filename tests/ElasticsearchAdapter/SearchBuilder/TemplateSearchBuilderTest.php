@@ -2,18 +2,18 @@
 namespace Tests\ElasticsearchAdapter\QueryBuilder;
 
 use ElasticsearchAdapter\Params\ArrayParams;
-use ElasticsearchAdapter\QueryBuilder\TemplateQueryBuilder;
+use ElasticsearchAdapter\SearchBuilder\TemplateSearchBuilder;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * TemplateQueryBuilderTest
+ * TemplateSearchBuilderTest
  *
  * @author   Guenter Hipler <guenter.hipler@unibas.ch>, Markus Mächler <markus.maechler@students.fhnw.ch>
  * @license  http://opensource.org/licenses/gpl-2.0.php
  * @link     http://linked.swissbib.ch
  */
-class TemplateQueryBuilderTest extends TestCase
+class TemplateSearchBuilderTest extends TestCase
 {
     /**
      * @var array
@@ -21,7 +21,7 @@ class TemplateQueryBuilderTest extends TestCase
     protected $templates = [];
 
     /**
-     * @var TemplateQueryBuilder
+     * @var TemplateSearchBuilder
      */
     protected $queryBuilder;
 
@@ -31,7 +31,7 @@ class TemplateQueryBuilderTest extends TestCase
     public function setUp()
     {
         $this->templates = Yaml::parse($this->loadResource('templates.yml'));
-        $this->queryBuilder = new TemplateQueryBuilder($this->templates, new ArrayParams());
+        $this->queryBuilder = new TemplateSearchBuilder($this->templates, new ArrayParams());
     }
 
     /**
@@ -41,7 +41,7 @@ class TemplateQueryBuilderTest extends TestCase
      */
     public function testInvalidTemplateName()
     {
-        $query = $this->queryBuilder->buildQueryFromTemplate('no one would call a template like that');
+        $search = $this->queryBuilder->buildSearchFromTemplate('no one would call a template like that');
     }
 
     /**
@@ -49,7 +49,7 @@ class TemplateQueryBuilderTest extends TestCase
      */
     public function testMatchTemplate()
     {
-        $query = $this->queryBuilder->buildQueryFromTemplate('match');
+        $search = $this->queryBuilder->buildSearchFromTemplate('match');
 
         $expected = [
             'index' => 'testIndex',
@@ -65,7 +65,7 @@ class TemplateQueryBuilderTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals($expected, $search->toArray());
     }
 
     /**
@@ -73,11 +73,12 @@ class TemplateQueryBuilderTest extends TestCase
      */
     public function testMatchTemplateWithVariables()
     {
-        $params = new ArrayParams();
-        $params->set('q', 'the query string');
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('q')->willReturn(true);
+        $paramsProphecy->get('q')->willReturn('the query string');
 
-        $this->queryBuilder->setParams($params);
-        $query = $this->queryBuilder->buildQueryFromTemplate('match_with_variables');
+        $this->queryBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->queryBuilder->buildSearchFromTemplate('match_with_variables');
 
         $expected = [
             'index' => 'testIndex',
@@ -93,7 +94,7 @@ class TemplateQueryBuilderTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $query->getQuery());
+        $this->assertEquals($expected, $search->toArray());
     }
 
     /**

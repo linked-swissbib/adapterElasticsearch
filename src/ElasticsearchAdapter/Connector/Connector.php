@@ -1,6 +1,9 @@
 <?php
 namespace ElasticsearchAdapter\Connector;
 
+use ElasticsearchAdapter\Result\Result;
+use ElasticsearchAdapter\Search\Search;
+
 /**
  * Connector interface
  *
@@ -10,5 +13,5 @@ namespace ElasticsearchAdapter\Connector;
  */
 interface Connector
 {
-    public function send(array $params) : array;
+    public function send(Search $params) : Result;
 }

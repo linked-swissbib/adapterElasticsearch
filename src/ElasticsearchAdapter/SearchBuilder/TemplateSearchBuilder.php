@@ -1,19 +1,19 @@
 <?php
-namespace ElasticsearchAdapter\QueryBuilder;
+namespace ElasticsearchAdapter\SearchBuilder;
 
 use ElasticsearchAdapter\Params\Params;
-use ElasticsearchAdapter\Query\TemplateQuery;
-use ElasticsearchAdapter\Query\Query;
+use ElasticsearchAdapter\Search\Search;
+use ElasticsearchAdapter\Search\TemplateSearch;
 use InvalidArgumentException;
 
 /**
- * TemplateQueryBuilder interface
+ * TemplateSearchBuilder
  *
  * @author   Guenter Hipler <guenter.hipler@unibas.ch>, Markus Mächler <markus.maechler@students.fhnw.ch>
  * @license  http://opensource.org/licenses/gpl-2.0.php
  * @link     http://linked.swissbib.ch
  */
-class TemplateQueryBuilder implements QueryBuilder
+class TemplateSearchBuilder
 {
     /**
      * @var array
@@ -38,25 +38,21 @@ class TemplateQueryBuilder implements QueryBuilder
     /**
      * @param string $template
      *
-     * @return Query
+     * @return Search
      *
      * @throws InvalidArgumentException if template is not found
      */
-    public function buildQueryFromTemplate(string $template) : Query
+    public function buildSearchFromTemplate(string $template) : Search
     {
         if (!isset($this->templates[$template])) {
             throw new InvalidArgumentException('No template with name "' . $template . '" found.');
         }
 
-        $templateQuery = new TemplateQuery($this->templates[$template]);
+        $templateSearch = new TemplateSearch($this->templates[$template], $this->params);
 
-        if ($this->params !== null) {
-            $templateQuery->setParams($this->params);
-        }
+        $templateSearch->prepare();
 
-        $templateQuery->build();
-
-        return $templateQuery;
+        return $templateSearch;
     }
 
     /**

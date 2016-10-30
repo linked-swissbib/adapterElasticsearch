@@ -3,6 +3,9 @@ namespace ElasticsearchAdapter\Connector;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
+use ElasticsearchAdapter\Result\ElasticsearchClientResult;
+use ElasticsearchAdapter\Search\Search;
+use ElasticsearchAdapter\Result\Result;
 
 /**
  * Elasticsearch client connector
@@ -28,8 +31,13 @@ class ElasticsearchClientConnector implements Connector
             ->build();
     }
 
-    public function send(array $params) : array
+    /**
+     * @inheritdoc
+     */
+    public function send(Search $search) : Result
     {
-        return $this->client->search($params);
+        $response = $this->client->search($search->toArray());
+
+        return new ElasticsearchClientResult($response);
     }
 }

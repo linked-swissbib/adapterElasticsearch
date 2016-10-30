@@ -2,6 +2,7 @@
 namespace ElasticsearchAdapter\Query;
 
 use ElasticsearchAdapter\Params\Params;
+use ElasticsearchAdapter\Params\ParamsReplacer;
 use InvalidArgumentException;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
@@ -41,6 +42,11 @@ class TemplateQuery implements Query
     protected $params = null;
 
     /**
+     * @var ParamsReplacer
+     */
+    protected $paramsReplacer = null;
+
+    /**
      * @var array
      */
     protected $boolQueryConfigToConst = [
@@ -52,14 +58,17 @@ class TemplateQuery implements Query
 
     /**
      * @param array $template
+     * @param Params $params
      */
-    public function __construct(array $template)
+    public function __construct(array $template, Params $params = null)
     {
         $this->template = $template;
+        $this->params = $params;
+        $this->paramsReplacer = new ParamsReplacer($params);
     }
 
     /**
-     * @inheritdoc
+     * @return array
      */
     public function getQuery() : array
     {
@@ -76,6 +85,29 @@ class TemplateQuery implements Query
     public function build()
     {
         $this->query = $this->buildQuery();
+    }
+
+    /**
+     * @return Params
+     */
+    public function getParams() : Params
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param Params $params
+     */
+    public function setParams(Params $params)
+    {
+        $this->params = $params;
+
+        $this->paramsReplacer->setParams($params);
+    }
+
+    public function toArray() : array
+    {
+        return $this->getQuery();
     }
 
     /**
@@ -97,21 +129,7 @@ class TemplateQuery implements Query
             }
         }
 
-        $searchParams = [
-            'index' => $this->replaceParams($this->template['index']),
-            'type' =>  $this->replaceParams($this->template['type']),
-            'body' => $this->search->toArray(),
-        ];
-
-        if (isset($this->template['size'])) {
-            $searchParams['size'] = $this->replaceParams($this->template['size']);
-        }
-
-        if (isset($this->template['from'])) {
-            $searchParams['from'] = $this->replaceParams($this->template['from']);
-        }
-
-        return $searchParams;
+        return $this->search->toArray();
     }
 
     /**
@@ -145,7 +163,7 @@ class TemplateQuery implements Query
      */
     protected function buildIdsQueryClause(array $query) : IdsQuery
     {
-        $values = $this->replaceParams($query['values']);
+        $values = $this->paramsReplacer->replace($query['values']);
         $idsQuery = new IdsQuery($values);
 
         return $idsQuery;
@@ -160,7 +178,7 @@ class TemplateQuery implements Query
     {
         //todo do we need parameters? what should the template syntax be?
         $name = key($config);
-        $matchQuery = new MatchQuery($name, $this->replaceParams($config[$name]));
+        $matchQuery = new MatchQuery($name, $this->paramsReplacer->replace($config[$name]));
 
         return $matchQuery;
     }
@@ -172,13 +190,13 @@ class TemplateQuery implements Query
      */
     protected function buildMultiMatchQueryClause(array $config) : MultiMatchQuery
     {
-        $query = $this->replaceParams($config['query']);
-        $fields = explode(',', $this->replaceParams($config['fields']));
+        $query = $this->paramsReplacer->replace($config['query']);
+        $fields = explode(',', $this->paramsReplacer->replace($config['fields']));
         $parameters = [];
 
         foreach ($config as $key => $value) {
             if (!in_array($key, ['query', 'fields'])) {
-                $parameters[$key] = $this->replaceParams($value);
+                $parameters[$key] = $this->paramsReplacer->replace($value);
             }
         }
 
@@ -239,69 +257,5 @@ class TemplateQuery implements Query
     protected function buildFilterClause(string $type, array $config) : BuilderInterface
     {
         return $this->buildQueryClause($type, $config);
-    }
-
-    /**
-     * @return Params
-     */
-    public function getParams() : Params
-    {
-        return $this->params;
-    }
-
-    /**
-     * @param Params $params
-     */
-    public function setParams(Params $params)
-    {
-        $this->params = $params;
-    }
-
-    /**
-     * @param string|array $raw
-     *
-     * @return string|array
-     */
-    protected function replaceParams($raw)
-    {
-        if (is_array($raw)) {
-            $replaced = [];
-
-            foreach ($raw as $key => $value) {
-                $matches = [];
-
-                if (preg_match('/^{(\w*)}$/', $value, $matches)) {
-                    $variableName = $matches[1];
-
-                    if ($this->params->has($variableName)) {
-                        $replaced[$key] = $this->params->get($variableName);
-                    }
-                }
-            }
-
-            return $replaced;
-        } elseif (is_string($raw)) {
-            $matches = [];
-
-            if (preg_match('/^{(\w*)}$/', $raw, $matches)) {
-                $variableName = $matches[1];
-
-                if ($this->params->has($variableName)) {
-                    return $this->params->get($variableName);
-                }
-            }
-        }
-
-        return $raw;
-    }
-
-    /**
-     * @param string $param
-     *
-     * @return bool
-     */
-    protected function isParam($param) : bool
-    {
-        return is_string($param) && preg_match('/^{(\w*)}$/', $param);
     }
 }

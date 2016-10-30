@@ -1,6 +1,8 @@
 <?php
 namespace ElasticsearchAdapter\Query;
 
+use ElasticsearchAdapter\Params\Params;
+
 /**
  * Query interface
  *
@@ -13,10 +15,20 @@ interface Query
     /**
      * @return array
      */
-    public function getQuery() : array;
+    public function toArray() : array;
 
     /**
      * @return void
      */
     public function build();
+
+    /**
+     * @param Params $params
+     */
+    public function setParams(Params $params);
+
+    /**
+     * @return Params
+     */
+    public function getParams();
 }

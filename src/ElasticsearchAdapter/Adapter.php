@@ -1,10 +1,9 @@
 <?php
 namespace ElasticsearchAdapter;
 
-use ElasticsearchAdapter\Config\Config;
 use ElasticsearchAdapter\Connector\Connector;
-use ElasticsearchAdapter\Params\Params;
-use ElasticsearchAdapter\Query\Query;
+use ElasticsearchAdapter\Result\Result;
+use ElasticsearchAdapter\Search\Search;
 
 /**
  * ElasticsearchAdapter
@@ -29,13 +28,12 @@ class Adapter
     }
 
     /**
-     * @param Query $query
-     * @param Params $params
+     * @param Search $search
      *
-     * @return array
+     * @return Result
      */
-    public function search(Query $query, Params $params) : array
+    public function search(Search $search) : Result
     {
-        return $this->connector->send($query->getQuery());
+        return $this->connector->send($search);
     }
 }
