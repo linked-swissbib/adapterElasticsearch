@@ -175,11 +175,11 @@ class TemplateSearch implements Search
             'body' => $this->query->toArray(),
         ];
 
-        if ($this->size) {
+        if ($this->size !== null) {
             $search['size'] = $this->size;
         }
 
-        if ($this->from) {
+        if ($this->from !== null) {
             $search['from'] = $this->from;
         }
 

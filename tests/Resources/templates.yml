@@ -1,3 +1,21 @@
+search:
+  index: 'index1'
+  type: 'type1'
+  size: 100
+  from: 90
+  query:
+    match:
+      _all: 'test query'
+
+search_with_variables:
+  index: '{index}'
+  type: '{type}'
+  size: '{size}'
+  from: '{from}'
+  query:
+    match:
+      _all: 'test query'
+
 match:
   index: 'testIndex'
   type: 'testType'
@@ -11,3 +29,14 @@ match_with_variables:
   query:
     match:
       _all: '{q}'
+
+multi_match:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    multi_match:
+      query: '{q}'
+      fields: 'field1^2,field2'
+      type: 'cross_fields'
+      operator: 'and'
+      minimum_should_match: '50%'

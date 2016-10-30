@@ -47,6 +47,80 @@ class TemplateSearchBuilderTest extends TestCase
     /**
      * @return void
      */
+    public function testSearch()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('type')->willReturn(true);
+        $paramsProphecy->has('index')->willReturn(true);
+        $paramsProphecy->has('size')->willReturn(true);
+        $paramsProphecy->has('from')->willReturn(true);
+        $paramsProphecy->get('type')->willReturn('test, test2');
+        $paramsProphecy->get('index')->willReturn('index, index2');
+        $paramsProphecy->get('size')->willReturn('10');
+        $paramsProphecy->get('from')->willReturn('0');
+
+        $this->queryBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->queryBuilder->buildSearchFromTemplate('search');
+
+        $expected = [
+            'index' => 'index1',
+            'type' => 'type1',
+            'body' => [
+                'query' => [
+                    'match' => [
+                        '_all' => [
+                            'query' => 'test query'
+                        ],
+                    ],
+                ],
+            ],
+            'size' => 100,
+            'from' => 90,
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
+     */
+    public function testSearchWithVariables()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('type')->willReturn(true);
+        $paramsProphecy->has('index')->willReturn(true);
+        $paramsProphecy->has('size')->willReturn(true);
+        $paramsProphecy->has('from')->willReturn(true);
+        $paramsProphecy->get('type')->willReturn('test, test2');
+        $paramsProphecy->get('index')->willReturn('index, index2');
+        $paramsProphecy->get('size')->willReturn('10');
+        $paramsProphecy->get('from')->willReturn('0');
+
+        $this->queryBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->queryBuilder->buildSearchFromTemplate('search_with_variables');
+
+        $expected = [
+            'index' => 'index, index2',
+            'type' => 'test, test2',
+            'body' => [
+                'query' => [
+                    'match' => [
+                        '_all' => [
+                            'query' => 'test query'
+                        ],
+                    ],
+                ],
+            ],
+            'size' => '10',
+            'from' => '0',
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
+     */
     public function testMatchTemplate()
     {
         $search = $this->queryBuilder->buildSearchFromTemplate('match');
