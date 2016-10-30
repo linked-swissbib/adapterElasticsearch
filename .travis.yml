@@ -7,7 +7,6 @@ php:
 
 before_install:
     - mkdir -p build/logs build/cov
-    - wget https://phar.phpunit.de/phpcov.phar
     - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
 
 install:
