@@ -226,10 +226,11 @@ class TemplateSearchBuilderTest extends TestCase
         $paramsProphecy->get('id')->willReturn('testid1234');
         $paramsProphecy->has('type')->willReturn(true);
         $paramsProphecy->get('type')->willReturn('testType');
+        $params = $paramsProphecy->reveal();
 
         $search = $this->searchBuilder->buildSearchFromTemplate('params');
 
-        $search->getQuery()->setParams($paramsProphecy->reveal());
+        $search->getQuery()->setParams($params);
 
         $expected = [
             'index' => 'testIndex',
@@ -246,6 +247,7 @@ class TemplateSearchBuilderTest extends TestCase
             ],
         ];
 
+        $this->assertEquals($params, $search->getQuery()->getParams());
         $this->assertEquals($expected, $search->toArray());
     }
 
