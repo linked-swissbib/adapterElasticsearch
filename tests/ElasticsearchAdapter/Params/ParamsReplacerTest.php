@@ -46,6 +46,23 @@ class ParamsReplacerTest extends TestCase
     /**
      * return void
      */
+    public function testReplaceSimpleArrayParam()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('param1')->willReturn(true);
+        $paramsProphecy->has('param2')->willReturn(true);
+        $paramsProphecy->has('param3')->willReturn(false);
+        $paramsProphecy->get('param1')->willReturn('value1');
+        $paramsProphecy->get('param2')->willReturn('value2');
+
+        $paramsReplacer = new ParamsReplacer($paramsProphecy->reveal());
+
+        $this->assertEquals(['value1', 'value2', 'param3'], $paramsReplacer->replace(['{param1}', '{param2}', 'param3']));
+    }
+
+    /**
+     * return void
+     */
     public function testDefaultModifier()
     {
         $paramsProphecy = $this->prophesize(ArrayParams::class);

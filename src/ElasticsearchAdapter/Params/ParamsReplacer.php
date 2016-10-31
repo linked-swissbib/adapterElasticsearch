@@ -105,14 +105,4 @@ class ParamsReplacer
 
         return $raw;
     }
-
-    /**
-     * @param string $param
-     *
-     * @return bool
-     */
-    protected function isParam($param) : bool
-    {
-        return is_string($param) && preg_match('/^{(\w*)}$/', $param);
-    }
 }
