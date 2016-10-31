@@ -1,5 +1,5 @@
 <?php
-namespace Tests\ElasticsearchAdapter\QueryBuilder;
+namespace Tests\ElasticsearchAdapter\SearchBuilder;
 
 use ElasticsearchAdapter\Params\ArrayParams;
 use ElasticsearchAdapter\SearchBuilder\TemplateSearchBuilder;

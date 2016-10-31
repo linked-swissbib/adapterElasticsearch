@@ -76,11 +76,11 @@ class TemplateSearch implements Search
         $this->query = new TemplateQuery($this->template, $this->params);
 
         if (isset($this->template['size'])) {
-            $this->size = $this->paramsReplacer->replace($this->template['size']);
+            $this->size = (int) $this->paramsReplacer->replace($this->template['size']);
         }
 
         if (isset($this->template['from'])) {
-            $this->from = $this->paramsReplacer->replace($this->template['from']);
+            $this->from = (int) $this->paramsReplacer->replace($this->template['from']);
         }
     }
 
