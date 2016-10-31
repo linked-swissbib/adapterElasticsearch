@@ -40,3 +40,10 @@ multi_match:
       type: 'cross_fields'
       operator: 'and'
       minimum_should_match: '50%'
+
+ids:
+  index: 'testIndex'
+  type: '{type}'
+  query:
+    ids:
+      values: ['{id}', '1234']

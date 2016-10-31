@@ -123,12 +123,6 @@ class TemplateQuery implements Query
             }
         }
 
-        if (isset($this->template['filter'])) {
-            foreach ($this->template['filter'] as $type => $config) {
-                $this->search->addFilter($this->buildFilterClause($type, $config));
-            }
-        }
-
         return $this->search->toArray();
     }
 
@@ -246,16 +240,5 @@ class TemplateQuery implements Query
         $termQuery = new TermQuery($name, $config[$name]);
 
         return $termQuery;
-    }
-
-    /**
-     * @param string $type
-     * @param array $config
-     *
-     * @return BuilderInterface
-     */
-    protected function buildFilterClause(string $type, array $config) : BuilderInterface
-    {
-        return $this->buildQueryClause($type, $config);
     }
 }
