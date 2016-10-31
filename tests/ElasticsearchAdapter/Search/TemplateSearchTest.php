@@ -1,12 +1,9 @@
 <?php
 namespace Tests\ElasticsearchAdapter\Search;
 
-use ElasticsearchAdapter\Params\ArrayParams;
 use ElasticsearchAdapter\Query\Query;
 use ElasticsearchAdapter\Search\TemplateSearch;
-use ElasticsearchAdapter\SearchBuilder\TemplateSearchBuilder;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * TemplateSearchTest
