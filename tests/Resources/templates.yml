@@ -47,3 +47,10 @@ ids:
   query:
     ids:
       values: ['{id}', '1234']
+
+params:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    ids:
+      values: ['{id}', '1234']

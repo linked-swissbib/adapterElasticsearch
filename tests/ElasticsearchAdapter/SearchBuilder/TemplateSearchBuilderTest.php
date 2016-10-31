@@ -217,6 +217,39 @@ class TemplateSearchBuilderTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReplaceQueryParamsTemplate()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('id')->willReturn(true);
+        $paramsProphecy->get('id')->willReturn('testid1234');
+        $paramsProphecy->has('type')->willReturn(true);
+        $paramsProphecy->get('type')->willReturn('testType');
+
+        $search = $this->searchBuilder->buildSearchFromTemplate('params');
+
+        $search->getQuery()->setParams($paramsProphecy->reveal());
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'ids' => [
+                        'values' => [
+                            0 => 'testid1234',
+                            1 => '1234',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
      * @param string $fileName
      *
      * @return string
