@@ -254,7 +254,7 @@ class TemplateSearchBuilderTest extends TestCase
     /**
      * @return void
      */
-    public function testMultiMatchTemplate()
+    public function testMultiMatchWithVariablesTemplate()
     {
         $paramsProphecy = $this->prophesize(ArrayParams::class);
         $paramsProphecy->has('q')->willReturn(true);
@@ -293,7 +293,7 @@ class TemplateSearchBuilderTest extends TestCase
     /**
      * @return void
      */
-    public function testMultiMatchWithVariablesTemplate()
+    public function testMultiMatchTemplate()
     {
         $search = $this->searchBuilder->buildSearchFromTemplate('multi_match');
 
