@@ -349,6 +349,52 @@ class TemplateSearchBuilderTest extends TestCase
 
     /**
      * @return void
+     */
+    public function testBoolTemplate()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('test')->willReturn(true);
+        $paramsProphecy->get('test')->willReturn('test field');
+        $paramsProphecy->has('q')->willReturn(true);
+        $paramsProphecy->get('q')->willReturn('test query');
+
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('bool');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'multi_match' => [
+                                    'query' => 'test query',
+                                    'fields' => [
+                                        'test field',
+                                        'test2'
+                                    ],
+                                ]
+                            ],
+                        ],
+                        'must_not' => [
+                            [
+                                'term' => [
+                                    'status' => 'active',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
      *
      * @expectedException \InvalidArgumentException
      */

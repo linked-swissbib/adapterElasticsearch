@@ -79,3 +79,35 @@ term:
   query:
     term:
       test: '{test}'
+
+bool:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    bool:
+      must:
+        multi_match:
+          query: '{q}'
+          fields: '{test},test2'
+      must_not:
+        term:
+          status: 'active'
+
+complex_bool:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    bool:
+      must:
+        user: 'test user'
+      must_not:
+        term:
+          availbility: 'not available'
+      filter:
+        term:
+          username: '{username}'
+      should:
+        term:
+          favourite: 'is favourite'
+      boost: 1.0
+      minimum_should_match: 1
