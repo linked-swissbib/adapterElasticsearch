@@ -395,6 +395,62 @@ class TemplateSearchBuilderTest extends TestCase
 
     /**
      * @return void
+     */
+    public function testComplexBoolTemplate()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('username')->willReturn(true);
+        $paramsProphecy->get('username')->willReturn('my name');
+
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('complex_bool');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'term' => [
+                                    'user' => 'test user',
+                                ]
+                            ],
+                        ],
+                        'must_not' => [
+                            [
+                                'term' => [
+                                    'availability' => 'not available',
+                                ],
+                            ],
+                        ],
+                        'filter' => [
+                            [
+                                'term' => [
+                                    'username' => 'my name',
+                                ],
+                            ],
+                        ],
+                        'should' => [
+                            [
+                                'term' => [
+                                    'favourite' => 'is favourite',
+                                ],
+                            ],
+                        ],
+                        'boost' => 1.0,
+                        'minimum_should_match' => 1,
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
      *
      * @expectedException \InvalidArgumentException
      */

@@ -209,17 +209,13 @@ class TemplateQuery implements Query
         $boolQuery = new BoolQuery();
 
         foreach ($config as $key => $value) {
-            if (is_string($value)) {
+            if (is_string($value) || is_numeric($value)) {
                 $boolQuery->addParameter($key, $value);
             } else {
                 $boolQueryType = $this->boolQueryConfigToConst[$key];
 
                 foreach ($value as $type => $config) {
-                    if (is_string($config)) {
-                        $query = $this->buildQueryClause('term', [$type => $config]);
-                    } else {
-                        $query = $this->buildQueryClause($type, $config);
-                    }
+                    $query = $this->buildQueryClause($type, $config);
 
                     $boolQuery->add($query, $boolQueryType);
                 }

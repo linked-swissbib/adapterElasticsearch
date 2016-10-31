@@ -99,10 +99,11 @@ complex_bool:
   query:
     bool:
       must:
-        user: 'test user'
+        term:
+          user: 'test user'
       must_not:
         term:
-          availbility: 'not available'
+          availability: 'not available'
       filter:
         term:
           username: '{username}'
