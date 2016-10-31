@@ -252,6 +252,18 @@ class TemplateSearchBuilderTest extends TestCase
     }
 
     /**
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidQueryTypeTemplate()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('invalid_query_type');
+
+        $search->getQuery()->build();
+    }
+
+    /**
      * @param string $fileName
      *
      * @return string

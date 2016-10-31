@@ -54,3 +54,10 @@ params:
   query:
     ids:
       values: ['{id}', '1234']
+
+invalid_query_type:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    invalid_query_type:
+      foo: 'bar'
