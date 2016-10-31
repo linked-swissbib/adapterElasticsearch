@@ -322,6 +322,33 @@ class TemplateSearchBuilderTest extends TestCase
 
     /**
      * @return void
+     */
+    public function testTermTemplate()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('test')->willReturn(true);
+        $paramsProphecy->get('test')->willReturn('test term');
+
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('term');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'term' => [
+                        'test' => 'test term',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
      *
      * @expectedException \InvalidArgumentException
      */

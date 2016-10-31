@@ -72,3 +72,10 @@ multi_match_with_variables:
     multi_match:
       query: '{q}'
       fields: '{firstName},{lastName},address'
+
+term:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    term:
+      test: '{test}'

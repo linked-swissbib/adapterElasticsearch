@@ -237,7 +237,8 @@ class TemplateQuery implements Query
     protected function buildTermQueryClause(array $config) : TermQuery
     {
         $name = key($config);
-        $termQuery = new TermQuery($name, $config[$name]);
+        $value = $this->paramsReplacer->replace($config[$name]);
+        $termQuery = new TermQuery($name, $value);
 
         return $termQuery;
     }
