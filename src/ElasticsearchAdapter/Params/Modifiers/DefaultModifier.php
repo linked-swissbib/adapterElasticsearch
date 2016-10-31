@@ -16,7 +16,7 @@ class DefaultModifier implements Modifier
     {
         if (isset($parameters[0]) && $params->has($parameters[0])) {
             return $params->get($parameters[0]);
-        } elseif ($parameters[1]) {
+        } elseif (isset($parameters[1])) {
             return $parameters[1];
         } else {
             return '';

@@ -75,4 +75,17 @@ class ParamsReplacerTest extends TestCase
         $this->assertEquals('10', $paramsReplacer->replace('{default(size, 20)}'));
         $this->assertEquals('20', $paramsReplacer->replace('{default(from, 20)}'));
     }
+
+    /**
+     * return void
+     */
+    public function testEmptyDefaultModifier()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('size')->willReturn(false);
+
+        $paramsReplacer = new ParamsReplacer($paramsProphecy->reveal());
+
+        $this->assertEquals('', $paramsReplacer->replace('{default(size)}'));
+    }
 }
