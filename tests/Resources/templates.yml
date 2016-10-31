@@ -30,17 +30,6 @@ match_with_variables:
     match:
       _all: '{q}'
 
-multi_match:
-  index: 'testIndex'
-  type: 'testType'
-  query:
-    multi_match:
-      query: '{q}'
-      fields: 'field1^2,field2'
-      type: 'cross_fields'
-      operator: 'and'
-      minimum_should_match: '50%'
-
 ids:
   index: 'testIndex'
   type: '{type}'
@@ -61,3 +50,25 @@ invalid_query_type:
   query:
     invalid_query_type:
       foo: 'bar'
+
+
+multi_match:
+  index: 'testIndex'
+  type: 'testType'
+  size: 20
+  query:
+    multi_match:
+      query: 'test'
+      fields: 'field1^2,field2'
+      type: 'cross_fields'
+      operator: 'and'
+      minimum_should_match: '50%'
+
+multi_match_with_variables:
+  index: 'testIndex'
+  type: 'testType'
+  size: 20
+  query:
+    multi_match:
+      query: '{q}'
+      fields: '{firstName},{lastName},address'

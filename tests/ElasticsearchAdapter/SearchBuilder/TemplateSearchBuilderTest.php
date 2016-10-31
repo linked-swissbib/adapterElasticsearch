@@ -253,6 +253,75 @@ class TemplateSearchBuilderTest extends TestCase
 
     /**
      * @return void
+     */
+    public function testMultiMatchTemplate()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('q')->willReturn(true);
+        $paramsProphecy->get('q')->willReturn('test query');
+        $paramsProphecy->has('firstName')->willReturn(true);
+        $paramsProphecy->get('firstName')->willReturn('my first name');
+        $paramsProphecy->has('lastName')->willReturn(true);
+        $paramsProphecy->get('lastName')->willReturn('my last name');
+        $paramsProphecy->has('address')->willReturn(true);
+        $paramsProphecy->get('address')->willReturn('my address, should not be set');
+
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('multi_match_with_variables');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'multi_match' => [
+                        'fields' => [
+                            'my first name',
+                            'my last name',
+                            'address'
+                        ],
+                        'query' => 'test query',
+                    ],
+                ],
+            ],
+            'size' => 20,
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
+     */
+    public function testMultiMatchWithVariablesTemplate()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('multi_match');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'multi_match' => [
+                        'fields' => [
+                            'field1^2',
+                            'field2',
+                        ],
+                        'query' => 'test',
+                        'type' => 'cross_fields',
+                        'operator' => 'and',
+                        'minimum_should_match' => '50%',
+                    ],
+                ],
+            ],
+            'size' => 20,
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
      *
      * @expectedException \InvalidArgumentException
      */

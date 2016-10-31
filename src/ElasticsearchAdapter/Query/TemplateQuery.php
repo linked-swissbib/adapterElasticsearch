@@ -185,7 +185,7 @@ class TemplateQuery implements Query
     protected function buildMultiMatchQueryClause(array $config) : MultiMatchQuery
     {
         $query = $this->paramsReplacer->replace($config['query']);
-        $fields = explode(',', $this->paramsReplacer->replace($config['fields']));
+        $fields = $this->paramsReplacer->replace(explode(',', $config['fields']));
         $parameters = [];
 
         foreach ($config as $key => $value) {
