@@ -17,11 +17,11 @@ class ElasticsearchClientConnectorTest extends TestCase
     /**
      * @return void
      *
-     * @expectedException \Elasticsearch\Common\Exceptions\Missing404Exception
+     * @expectedException \Elasticsearch\Common\Exceptions\NoNodesAvailableException
      */
     public function testSend()
     {
-        $connector = new ElasticsearchClientConnector(['localhost']);
+        $connector = new ElasticsearchClientConnector(['somehostnoonehasconfigured']);
         $templateSearch = new TemplateSearch(['index' => 'test', 'type' => 'test']);
 
         $templateSearch->prepare();
