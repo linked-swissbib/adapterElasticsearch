@@ -88,4 +88,23 @@ class ParamsReplacerTest extends TestCase
 
         $this->assertEquals('', $paramsReplacer->replace('{default(size)}'));
     }
+
+    /**
+     * return void
+     */
+    public function testParams()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $params = $paramsProphecy->reveal();
+        $paramsProphecy2 = $this->prophesize(ArrayParams::class);
+        $params2 = $paramsProphecy2->reveal();
+
+        $paramsReplacer = new ParamsReplacer($params);
+
+        $this->assertEquals($params, $paramsReplacer->getParams());
+
+        $paramsReplacer->setParams($params2);
+
+        $this->assertEquals($params2, $paramsReplacer->getParams());
+    }
 }

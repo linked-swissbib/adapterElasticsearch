@@ -23,7 +23,7 @@ class TemplateSearchBuilderTest extends TestCase
     /**
      * @var TemplateSearchBuilder
      */
-    protected $queryBuilder;
+    protected $searchBuilder;
 
     /**
      * @return void
@@ -31,7 +31,7 @@ class TemplateSearchBuilderTest extends TestCase
     public function setUp()
     {
         $this->templates = Yaml::parse($this->loadResource('templates.yml'));
-        $this->queryBuilder = new TemplateSearchBuilder($this->templates, new ArrayParams());
+        $this->searchBuilder = new TemplateSearchBuilder($this->templates, new ArrayParams());
     }
 
     /**
@@ -41,7 +41,20 @@ class TemplateSearchBuilderTest extends TestCase
      */
     public function testInvalidTemplateName()
     {
-        $search = $this->queryBuilder->buildSearchFromTemplate('no one would call a template like that');
+        $search = $this->searchBuilder->buildSearchFromTemplate('no one would call a template like that');
+    }
+
+    /**
+     * @return void
+     */
+    public function testParams()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $params = $paramsProphecy->reveal();
+
+        $this->searchBuilder->setParams($params);
+
+        $this->assertEquals($params, $this->searchBuilder->getParams());
     }
 
     /**
@@ -59,8 +72,8 @@ class TemplateSearchBuilderTest extends TestCase
         $paramsProphecy->get('size')->willReturn('10');
         $paramsProphecy->get('from')->willReturn('0');
 
-        $this->queryBuilder->setParams($paramsProphecy->reveal());
-        $search = $this->queryBuilder->buildSearchFromTemplate('search');
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('search');
 
         $expected = [
             'index' => 'index1',
@@ -96,8 +109,8 @@ class TemplateSearchBuilderTest extends TestCase
         $paramsProphecy->get('size')->willReturn('10');
         $paramsProphecy->get('from')->willReturn('0');
 
-        $this->queryBuilder->setParams($paramsProphecy->reveal());
-        $search = $this->queryBuilder->buildSearchFromTemplate('search_with_variables');
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('search_with_variables');
 
         $expected = [
             'index' => 'index, index2',
@@ -123,7 +136,7 @@ class TemplateSearchBuilderTest extends TestCase
      */
     public function testMatchTemplate()
     {
-        $search = $this->queryBuilder->buildSearchFromTemplate('match');
+        $search = $this->searchBuilder->buildSearchFromTemplate('match');
 
         $expected = [
             'index' => 'testIndex',
@@ -151,8 +164,8 @@ class TemplateSearchBuilderTest extends TestCase
         $paramsProphecy->has('q')->willReturn(true);
         $paramsProphecy->get('q')->willReturn('the query string');
 
-        $this->queryBuilder->setParams($paramsProphecy->reveal());
-        $search = $this->queryBuilder->buildSearchFromTemplate('match_with_variables');
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('match_with_variables');
 
         $expected = [
             'index' => 'testIndex',
