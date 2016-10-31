@@ -71,9 +71,15 @@ class TemplateSearch implements Search
      */
     public function prepare()
     {
-        $this->index = $this->paramsReplacer->replace($this->template['index']);
-        $this->type = $this->paramsReplacer->replace($this->template['type']);
         $this->query = new TemplateQuery($this->template, $this->params);
+
+        if (isset($this->template['index'])) {
+            $this->index = $this->paramsReplacer->replace($this->template['index']);
+        }
+
+        if (isset($this->template['type'])) {
+            $this->type = $this->paramsReplacer->replace($this->template['type']);
+        }
 
         if (isset($this->template['size'])) {
             $this->size = (int) $this->paramsReplacer->replace($this->template['size']);
