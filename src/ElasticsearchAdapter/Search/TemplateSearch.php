@@ -28,12 +28,12 @@ class TemplateSearch implements Search
     /**
      * @var int
      */
-    protected $size = 0;
+    protected $size;
 
     /**
      * @var int
      */
-    protected $from = 0;
+    protected $from;
 
     /**
      * @var Query
@@ -135,7 +135,7 @@ class TemplateSearch implements Search
      */
     public function getSize() : int
     {
-        return $this->size;
+        return (int) $this->size;
     }
 
     /**
@@ -151,7 +151,7 @@ class TemplateSearch implements Search
      */
     public function getFrom() : int
     {
-        return $this->from;
+        return (int) $this->from;
     }
 
     /**
