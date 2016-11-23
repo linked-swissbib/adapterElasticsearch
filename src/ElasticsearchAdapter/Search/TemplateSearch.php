@@ -18,22 +18,22 @@ class TemplateSearch implements Search
     /**
      * @var string
      */
-    protected $index;
+    protected $index = '';
 
     /**
      * @var string
      */
-    protected $type;
+    protected $type = '';
 
     /**
      * @var int
      */
-    protected $size;
+    protected $size = 0;
 
     /**
      * @var int
      */
-    protected $from;
+    protected $from = 0;
 
     /**
      * @var Query
@@ -43,7 +43,7 @@ class TemplateSearch implements Search
     /**
      * @var array
      */
-    protected $template;
+    protected $template = [];
 
     /**
      * @var Params
