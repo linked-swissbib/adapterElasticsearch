@@ -13,5 +13,5 @@ use ElasticsearchAdapter\Search\Search;
  */
 interface Connector
 {
-    public function send(Search $params) : Result;
+    public function send(Search $search) : Result;
 }

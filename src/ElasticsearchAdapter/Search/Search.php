@@ -25,11 +25,11 @@ interface Search
     public function getIndex() : string;
 
     /**
-     * @param string $types
+     * @param string $type
      *
      * @return void
      */
-    public function setType(string $types);
+    public function setType(string $type);
 
     /**
      * @return string
@@ -61,11 +61,11 @@ interface Search
     public function getFrom() : int;
 
     /**
-     * @param Query $type
+     * @param Query $query
      *
      * @return void
      */
-    public function setQuery(Query $type);
+    public function setQuery(Query $query);
 
     /**
      * @return Query
