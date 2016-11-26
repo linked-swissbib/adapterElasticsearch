@@ -214,8 +214,14 @@ class TemplateQuery implements Query
             } else {
                 $boolQueryType = $this->boolQueryConfigToConst[$key];
 
-                foreach ($value as $type => $config) {
-                    $query = $this->buildQueryClause($type, $config);
+                foreach ($value as $type => $clauseConfig) {
+                    if (is_int($type)) {
+                        //multiple leaf clauses
+                        $type = key($clauseConfig);
+                        $query = $this->buildQueryClause($type, $clauseConfig[$type]);
+                    } else {
+                        $query = $this->buildQueryClause($type, $clauseConfig);
+                    }
 
                     $boolQuery->add($query, $boolQueryType);
                 }

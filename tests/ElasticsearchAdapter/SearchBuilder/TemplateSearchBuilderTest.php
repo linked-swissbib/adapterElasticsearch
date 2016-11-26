@@ -424,6 +424,11 @@ class TemplateSearchBuilderTest extends TestCase
                                     'availability' => 'not available',
                                 ],
                             ],
+                            [
+                                'term' => [
+                                    'availability' => 'maybe available',
+                                ],
+                            ],
                         ],
                         'filter' => [
                             [

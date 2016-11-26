@@ -102,8 +102,10 @@ complex_bool:
         term:
           user: 'test user'
       must_not:
-        term:
-          availability: 'not available'
+        - term:
+            availability: 'not available'
+        - term:
+            availability: 'maybe available'
       filter:
         term:
           username: '{username}'
