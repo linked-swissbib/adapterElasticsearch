@@ -1,6 +1,7 @@
 <?php
 namespace ElasticsearchAdapter\Query;
 
+use ElasticsearchAdapter\Exception\RequiredParameterException;
 use ElasticsearchAdapter\Params\Params;
 use ElasticsearchAdapter\Params\ParamsReplacer;
 use InvalidArgumentException;
@@ -81,6 +82,8 @@ class TemplateQuery implements Query
 
     /**
      * @inheritdoc
+     *
+     * @throws RequiredParameterException
      */
     public function build()
     {
@@ -105,6 +108,11 @@ class TemplateQuery implements Query
         $this->paramsReplacer->setParams($params);
     }
 
+    /**
+     * @return array
+     *
+     * @throws RequiredParameterException
+     */
     public function toArray() : array
     {
         return $this->getQuery();
@@ -112,6 +120,8 @@ class TemplateQuery implements Query
 
     /**
      * @return array
+     *
+     * @throws RequiredParameterException
      */
     protected function buildQuery()
     {
@@ -131,6 +141,8 @@ class TemplateQuery implements Query
      * @param array $config
      *
      * @return BuilderInterface
+     *
+     * @throws RequiredParameterException
      */
     protected function buildQueryClause(string $queryType, array $config) : BuilderInterface
     {
@@ -157,8 +169,18 @@ class TemplateQuery implements Query
      */
     protected function buildIdsQueryClause(array $query) : IdsQuery
     {
+        $this->checkRequiredParameter('values', $query);
+
         $values = $this->paramsReplacer->replace($query['values']);
-        $idsQuery = new IdsQuery($values);
+        $parameters = [];
+
+        foreach ($query as $parameterName => $parameterValue) {
+            if ($parameterName !== 'values') {
+                $parameters[$parameterName] = $this->paramsReplacer->replace($parameterValue);
+            }
+        }
+
+        $idsQuery = new IdsQuery($values, $parameters);
 
         return $idsQuery;
     }
@@ -167,12 +189,29 @@ class TemplateQuery implements Query
      * @param array $config
      *
      * @return MatchQuery
+     *
+     * @throws RequiredParameterException
      */
     protected function buildMatchQueryClause(array $config) : MatchQuery
     {
-        //todo do we need parameters? what should the template syntax be?
         $name = key($config);
-        $matchQuery = new MatchQuery($name, $this->paramsReplacer->replace($config[$name]));
+        $parameters = [];
+
+        if (is_array($config[$name])) {
+            $this->checkRequiredParameter('query', $config[$name]);
+
+            $value = $this->paramsReplacer->replace($config[$name]['query']);
+
+            foreach ($config[$name] as $parameterName => $parameterValue) {
+                if ($parameterName !== 'query') {
+                    $parameters[$parameterName] = $this->paramsReplacer->replace($parameterValue);
+                }
+            }
+        } else {
+            $value = $this->paramsReplacer->replace($config[$name]);
+        }
+
+        $matchQuery = new MatchQuery($name, $value, $parameters);
 
         return $matchQuery;
     }
@@ -181,16 +220,21 @@ class TemplateQuery implements Query
      * @param array $config
      *
      * @return MultiMatchQuery
+     *
+     * @throws RequiredParameterException
      */
     protected function buildMultiMatchQueryClause(array $config) : MultiMatchQuery
     {
+        $this->checkRequiredParameter('query', $config);
+        $this->checkRequiredParameter('fields', $config);
+
         $query = $this->paramsReplacer->replace($config['query']);
         $fields = $this->paramsReplacer->replace(explode(',', $config['fields']));
         $parameters = [];
 
-        foreach ($config as $key => $value) {
-            if (!in_array($key, ['query', 'fields'])) {
-                $parameters[$key] = $this->paramsReplacer->replace($value);
+        foreach ($config as $parameterName => $parameterValue) {
+            if (!in_array($parameterName, ['query', 'fields'])) {
+                $parameters[$parameterName] = $this->paramsReplacer->replace($parameterValue);
             }
         }
 
@@ -235,13 +279,42 @@ class TemplateQuery implements Query
      * @param array $config
      *
      * @return TermQuery
+     *
+     * @throws RequiredParameterException
      */
     protected function buildTermQueryClause(array $config) : TermQuery
     {
         $name = key($config);
-        $value = $this->paramsReplacer->replace($config[$name]);
-        $termQuery = new TermQuery($name, $value);
+        $parameters = [];
+
+        if (is_array($config[$name])) {
+            $this->checkRequiredParameter('value', $config[$name]);
+            $value = $this->paramsReplacer->replace($config[$name]['value']);
+
+            foreach ($config[$name] as $parameterName => $parameterValue) {
+                if ($parameterName !== 'value') {
+                    $parameters[$parameterName] = $this->paramsReplacer->replace($parameterValue);
+                }
+            }
+        } else {
+            $value = $this->paramsReplacer->replace($config[$name]);
+        }
+
+        $termQuery = new TermQuery($name, $value, $parameters);
 
         return $termQuery;
+    }
+
+    /**
+     * @param string $name
+     * @param array $parameters
+     *
+     * @throws RequiredParameterException
+     */
+    protected function checkRequiredParameter(string $name, array $parameters)
+    {
+        if (!isset($parameters[$name])) {
+            throw new RequiredParameterException('Required parameter "' . $name . '" not set for query.');
+        }
     }
 }

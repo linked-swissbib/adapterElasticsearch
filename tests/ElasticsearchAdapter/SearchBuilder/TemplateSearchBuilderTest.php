@@ -187,6 +187,44 @@ class TemplateSearchBuilderTest extends TestCase
     /**
      * @return void
      */
+    public function testMatchTemplateWithParameters()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('match_with_parameters');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'match' => [
+                        '_all' => [
+                            'query' => 'search query',
+                            'operator' => 'and',
+                            'foo' => 'bar',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
+     *
+     * @expectedException \ElasticsearchAdapter\Exception\RequiredParameterException
+     */
+    public function testMatchTemplateWithParametersMissingParameter()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('match_with_parameters_missing_parameter');
+
+        $search->toArray();
+    }
+
+    /**
+     * @return void
+     */
     public function testIdsTemplate()
     {
         $paramsProphecy = $this->prophesize(ArrayParams::class);
@@ -207,6 +245,31 @@ class TemplateSearchBuilderTest extends TestCase
                         'values' => [
                             0 => 'testid1234',
                             1 => '1234',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
+     */
+    public function testIdsTemplateWithParameters()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('ids_with_parameters');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'ids' => [
+                        'type' => 'typeB',
+                        'values' => [
+                            0 => '1234',
                         ],
                     ],
                 ],
@@ -345,6 +408,43 @@ class TemplateSearchBuilderTest extends TestCase
         ];
 
         $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
+     */
+    public function testTermTemplateWithParameters()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('term_with_parameters');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type' => 'testType',
+            'body' => [
+                'query' => [
+                    'term' => [
+                        'test' => [
+                            'value' => 'test',
+                            'boost' => 2,
+                        ]
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
+    /**
+     * @return void
+     *
+     * @expectedException \ElasticsearchAdapter\Exception\RequiredParameterException
+     */
+    public function testTermTemplateWithParametersMissingParameter()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('term_with_parameters_missing_parameter');
+
+        $search->toArray();
     }
 
     /**

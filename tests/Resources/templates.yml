@@ -30,12 +30,39 @@ match_with_variables:
     match:
       _all: '{q}'
 
+match_with_parameters:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    match:
+      _all:
+        query: 'search query'
+        operator: 'and'
+        foo: 'bar'
+
+match_with_parameters_missing_parameter:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    match:
+      _all:
+        operator: 'and'
+        foo: 'bar'
+
 ids:
   index: 'testIndex'
   type: '{type}'
   query:
     ids:
       values: ['{id}', '1234']
+
+ids_with_parameters:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    ids:
+      type: 'typeB'
+      values: ['1234']
 
 params:
   index: 'testIndex'
@@ -79,6 +106,23 @@ term:
   query:
     term:
       test: '{test}'
+
+term_with_parameters:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    term:
+      test:
+        value: 'test'
+        boost: 2
+
+term_with_parameters_missing_parameter:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    term:
+      test:
+        boost: 2
 
 bool:
   index: 'testIndex'
