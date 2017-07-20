@@ -6,11 +6,13 @@ use ElasticsearchAdapter\Params\Params;
 use ElasticsearchAdapter\Params\ParamsReplacer;
 use InvalidArgumentException;
 use ONGR\ElasticsearchDSL\BuilderInterface;
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
-use ONGR\ElasticsearchDSL\Query\IdsQuery;
-use ONGR\ElasticsearchDSL\Query\MatchQuery;
-use ONGR\ElasticsearchDSL\Query\MultiMatchQuery;
-use ONGR\ElasticsearchDSL\Query\TermQuery;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\MatchAllQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\IdsQuery;
+use ONGR\ElasticsearchDSL\Query\FullText\MatchQuery;
+use ONGR\ElasticsearchDSL\Query\FullText\MultiMatchQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use ONGR\ElasticsearchDSL\Search;
 
 /**
@@ -157,6 +159,11 @@ class TemplateQuery implements Query
                 return $this->buildBoolQueryClause($config);
             case 'term':
                 return $this->buildTermQueryClause($config);
+            case 'exists':
+                return $this->buildExistsQueryClause($config);
+            case 'match_all':
+                return $this->buildMatchAllQueryClause($config);
+
             default:
                 throw new InvalidArgumentException('QueryType "' . $queryType . '" is not implemented yet.');
         }
@@ -304,6 +311,48 @@ class TemplateQuery implements Query
 
         return $termQuery;
     }
+
+
+    /**
+     * @param array $config
+     *
+     * @return ExistsQuery
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function buildExistsQueryClause(array $config) : ExistsQuery
+    {
+        $name = key($config);
+
+        if (is_array($config[$name])) {
+            throw new InvalidArgumentException('Exists Query in combintaion 
+            with array type '. $name .' in config is not allowed ');
+
+        } else {
+            $value = $this->paramsReplacer->replace($config[$name]);
+        }
+
+        $existsQuery = new ExistsQuery($value);
+
+        return $existsQuery;
+    }
+
+
+    /**
+     * @param array $config
+     *
+     * @return MatchAllQuery
+     *
+     * @throws RequiredParameterException
+     */
+    protected function buildMatchAllQueryClause(array $config) : MatchAllQuery
+    {
+        //we do not need any parameters
+        return new MatchAllQuery();
+    }
+
+
+
 
     /**
      * @param string $name

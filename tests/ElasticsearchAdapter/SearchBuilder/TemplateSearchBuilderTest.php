@@ -1,6 +1,7 @@
 <?php
 namespace Tests\ElasticsearchAdapter\SearchBuilder;
 
+use ElasticsearchAdapter\Connector\ElasticsearchClientConnector;
 use ElasticsearchAdapter\Params\ArrayParams;
 use ElasticsearchAdapter\SearchBuilder\TemplateSearchBuilder;
 use PHPUnit\Framework\TestCase;
@@ -553,6 +554,91 @@ class TemplateSearchBuilderTest extends TestCase
 
         $this->assertEquals($expected, $search->toArray());
     }
+
+
+    /**
+     * @return void
+     */
+    public function testComplex_bool_filterdctrights()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('q')->willReturn(true);
+        $paramsProphecy->get('q')->willReturn('hannes');
+
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
+        $search = $this->searchBuilder->buildSearchFromTemplate('complex_bool_filterdctrights');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type'  => 'testType',
+            'body'  => [
+                'query' => [
+                    'bool'  => [
+                        'must'  => [
+                            [
+                                'multi_match'   => [
+                                    'fields' => [
+                                        '0' =>  'dct:title',
+                                        '1' => 'dct:language'
+
+                                    ],
+                                    'query' => 'hannes'
+                                ]
+                            ]
+                        ],
+                        'must_not'  =>  [
+                            [
+                                'exists'    =>  [
+                                    'field' =>  'dct:rights'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+
+        $this->assertEquals($expected, $search->toArray());
+
+    }
+
+
+    /**
+     * @return void
+     */
+    public function testMatchAll()
+    {
+        $search = $this->searchBuilder->buildSearchFromTemplate('match_all_query');
+
+        $expected = [
+            'index' => 'testIndex',
+            'type'  => 'testType',
+            'size'  => 0,
+            'body'  => [
+                'query' => [
+                    'bool'  => [
+                        'must'  => [
+                            [
+                                'match_all'   => new \stdClass()
+
+                            ]
+                        ],
+                        'must_not'  =>  [
+                            [
+                                'exists'    =>  [
+                                    'field' =>  'dct:rights'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expected, $search->toArray());
+    }
+
 
     /**
      * @return void

@@ -100,6 +100,22 @@ multi_match_with_variables:
       query: '{q}'
       fields: '{firstName},{lastName},address'
 
+match_all_query:
+  index: 'testIndex'
+  type: 'testType'
+  size: 0
+  query:
+    bool:
+      must:
+        match_all:
+        #we need an additional key value pair because the query builder expects an array
+        #although match_all is used nearly without any options
+          eins: 'eins'
+      must_not:
+        exists:
+          field: 'dct:rights'
+
+
 term:
   index: 'testIndex'
   type: 'testType'
@@ -158,3 +174,19 @@ complex_bool:
           favourite: 'is favourite'
       boost: 1.0
       minimum_should_match: 1
+
+complex_bool_filterdctrights:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    bool:
+      must:
+        multi_match:
+          query: '{q}'
+          fields: 'dct:title,dct:language'
+      #we need must_not instead of filter because missing Query Type is no longer supported by ES in version 5
+      must_not:
+        exists:
+          field: 'dct:rights'
+
+
