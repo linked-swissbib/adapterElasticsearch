@@ -327,7 +327,6 @@ class TemplateQuery implements Query
         if (is_array($config[$name])) {
             throw new InvalidArgumentException('Exists Query in combintaion 
             with array type '. $name .' in config is not allowed ');
-
         } else {
             $value = $this->paramsReplacer->replace($config[$name]);
         }
