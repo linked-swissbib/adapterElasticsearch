@@ -74,9 +74,9 @@ class ParamsReplacer
     /**
      * @param string $raw
      *
-     * @return string
+     * @return string|array
      */
-    protected function replaceSingleParam(string $raw) : string
+    protected function replaceSingleParam(string $raw)
     {
         if ($this->params === null) {
             return $raw;

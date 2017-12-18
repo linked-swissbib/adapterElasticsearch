@@ -187,7 +187,7 @@ class TemplateQuery implements Query
             }
         }
 
-        $idsQuery = new IdsQuery($values, $parameters);
+        $idsQuery = new IdsQuery($this->fixValuesArray($values), $parameters);
 
         return $idsQuery;
     }
@@ -364,5 +364,23 @@ class TemplateQuery implements Query
         if (!isset($parameters[$name])) {
             throw new RequiredParameterException('Required parameter "' . $name . '" not set for query.');
         }
+    }
+
+    /**
+     * Fixes $values arrays like this:
+     *
+     * [["a", "b"]] to ["a", "b"]
+     *
+     * This happens in id search with multiple ids
+     *
+     * @param $values
+     * @return array
+     */
+    protected function fixValuesArray($values)
+    {
+        if ($values !== null && count($values === 1) && is_array($values[0])) {
+            $values = $values[0];
+        }
+        return $values;
     }
 }
