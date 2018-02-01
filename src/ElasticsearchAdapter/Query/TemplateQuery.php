@@ -13,6 +13,7 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\IdsQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\MatchQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\MultiMatchQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermsQuery;
 use ONGR\ElasticsearchDSL\Search;
 
 /**
