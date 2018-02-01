@@ -390,6 +390,7 @@ class TemplateSearchBuilderTest extends TestCase
         $paramsProphecy->has('q')->willReturn(true);
         $paramsProphecy->get('q')->willReturn('test term');
 
+        $this->searchBuilder->setParams($paramsProphecy->reveal());
         $search = $this->searchBuilder->buildSearchFromTemplate('terms');
         $expected = [
           'index' => 'testIndex',
