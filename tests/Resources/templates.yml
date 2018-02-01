@@ -115,6 +115,12 @@ match_all_query:
         exists:
           field: 'dct:rights'
 
+terms:
+  index: 'testIndex'
+  type: 'testType'
+  query:
+    terms:
+      'field': ['{q}']
 
 term:
   index: 'testIndex'

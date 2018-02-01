@@ -1,7 +1,7 @@
 <?php
+
 namespace Tests\ElasticsearchAdapter\SearchBuilder;
 
-use ElasticsearchAdapter\Connector\ElasticsearchClientConnector;
 use ElasticsearchAdapter\Params\ArrayParams;
 use ElasticsearchAdapter\SearchBuilder\TemplateSearchBuilder;
 use PHPUnit\Framework\TestCase;
@@ -384,6 +384,27 @@ class TemplateSearchBuilderTest extends TestCase
         $this->assertEquals($expected, $search->toArray());
     }
 
+    public function testTermsTemplate()
+    {
+        $paramsProphecy = $this->prophesize(ArrayParams::class);
+        $paramsProphecy->has('q')->willReturn(true);
+        $paramsProphecy->get('q')->willReturn('test term');
+
+        $search = $this->searchBuilder->buildSearchFromTemplate('terms');
+        $expected = [
+          'index' => 'testIndex',
+          'type' => 'testType',
+          'body' => [
+            'query' => [
+              'terms' => [
+                'field' => [0 => 'test term'],
+              ],
+            ],
+          ],
+        ];
+        $this->assertEquals($expected, $search->toArray());
+    }
+
     /**
      * @return void
      */
@@ -638,7 +659,6 @@ class TemplateSearchBuilderTest extends TestCase
 
         $this->assertEquals($expected, $search->toArray());
     }
-
 
     /**
      * @return void
