@@ -13,6 +13,7 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\IdsQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\MatchQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\MultiMatchQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermsQuery;
 use ONGR\ElasticsearchDSL\Search;
 
 /**
@@ -159,6 +160,8 @@ class TemplateQuery implements Query
                 return $this->buildBoolQueryClause($config);
             case 'term':
                 return $this->buildTermQueryClause($config);
+            case 'terms':
+                return $this->buildTermsQueryClause($config);
             case 'exists':
                 return $this->buildExistsQueryClause($config);
             case 'match_all':
@@ -312,6 +315,27 @@ class TemplateQuery implements Query
         return $termQuery;
     }
 
+
+    /**
+     * @param array $config
+     *
+     * @return TermsQuery
+     */
+    protected function buildTermsQueryClause(array $config) : TermsQuery
+    {
+        $name = key($config);
+        $parameters = [];
+
+        $values = $this->paramsReplacer->replace($config[$name]);
+
+        if (!is_array($values)) {
+            $values = [$values];
+        }
+
+        $termsQuery = new TermsQuery($name, $values, $parameters);
+
+        return $termsQuery;
+    }
 
     /**
      * @param array $config
