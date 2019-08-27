@@ -20,8 +20,8 @@
     },
     "require": {
         "php": ">=7.0",
-        "elasticsearch/elasticsearch": "5.2.*",
-        "ongr/elasticsearch-dsl": "5.0.*",
+        "elasticsearch/elasticsearch": "7.2.*",
+        "ongr/elasticsearch-dsl": "6.0.3",
         "monolog/monolog": "^1.21"
     },
     "require-dev": {
