@@ -45,6 +45,18 @@ class TemplateSearch implements Search
      */
     protected $template = [];
 
+
+    private $mapType2Index = [
+        'bibliographicResource' => 'bibliographicResource',
+        'document' => 'document',
+        'work' => 'work',
+        'person' => 'person',
+        'organisation' => 'organisation',
+        'item' => 'item',
+        //DEFAULT seems only to be used for gnd
+        'DEFAULT' => 'gnd'
+    ];
+
     /**
      * @var Params
      */
@@ -171,13 +183,17 @@ class TemplateSearch implements Search
     }
 
     /**
+     * @throws \Exception
      * @return array
      */
     public function toArray() : array
     {
         $search = [
-            'index' => $this->index,
-            'type' => $this->type,
+            'track_total_hits' =>  true,
+
+            //'index' => $this->index,
+            'index' => $this->adjustIndexName($this->type),
+            //'type' => $this->type,
             'body' => $this->query->toArray(),
         ];
 
@@ -190,5 +206,19 @@ class TemplateSearch implements Search
         }
 
         return $search;
+    }
+
+    /**
+     * maps an index-type (used in Elasticsearch version <=  5) to an index name
+     * @param string $typeName
+     * @throws \Exception
+     * @return string
+     */
+    private function adjustIndexName(string $typeName) {
+        if (array_key_exists($typeName, $this->mapType2Index)) {
+            return $this->mapType2Index[$typeName];
+        } else {
+            throw new \Exception("type not found");
+        }
     }
 }

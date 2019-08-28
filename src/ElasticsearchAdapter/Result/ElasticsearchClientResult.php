@@ -28,7 +28,13 @@ class ElasticsearchClientResult implements Result
      */
     public function getTotal() : int
     {
-        return $this->result['hits']['total'];
+        //changed structure in ES7 and not always available (depends on query)- therefor: check it
+        if (array_key_exists('hits', $this->result) && array_key_exists('total', $this->result['hits']) &&
+            array_key_exists('value', $this->result['hits']['total']))
+            return $this->result['hits']['total']['value'];
+        else
+            return 0;
+
     }
 
     /**
