@@ -25,13 +25,17 @@ class TemplateSearchBuilder
      */
     protected $params;
 
+
+    protected $type2indexmapping = [];
+
     /**
      * @param array $templates
      * @param Params $params
      */
-    public function __construct(array $templates, Params $params = null)
+    public function __construct(array $templates, array $type2IndexMapping, Params $params = null)
     {
         $this->templates = $templates;
+        $this->type2indexmapping = $type2IndexMapping;
         $this->params = $params;
     }
 

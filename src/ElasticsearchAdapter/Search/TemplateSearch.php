@@ -46,6 +46,7 @@ class TemplateSearch implements Search
     protected $template = [];
 
 
+    /*
     private $mapType2Index = [
         'bibliographicResource' => 'bibliographicResource',
         'document' => 'document',
@@ -56,6 +57,9 @@ class TemplateSearch implements Search
         //DEFAULT seems only to be used for gnd
         'DEFAULT' => 'gnd'
     ];
+    */
+
+    protected $mapType2Index = [];
 
     /**
      * @var Params
@@ -71,9 +75,10 @@ class TemplateSearch implements Search
      * @param array $template
      * @param Params $params
      */
-    public function __construct(array $template, Params $params = null)
+    public function __construct(array $template, array $type2IndexMapping, Params $params = null)
     {
         $this->template = $template;
+        $this->mapType2Index = $type2IndexMapping;
         $this->params = $params;
         $this->paramsReplacer = new ParamsReplacer($params);
     }
