@@ -52,7 +52,7 @@ class TemplateSearchBuilder
             throw new InvalidArgumentException('No template with name "' . $template . '" found.');
         }
 
-        $templateSearch = new TemplateSearch($this->templates[$template], $this->params);
+        $templateSearch = new TemplateSearch($this->templates[$template], $this->type2indexmapping, $this->params);
 
         $templateSearch->prepare();
 
