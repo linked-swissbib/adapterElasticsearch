@@ -19,16 +19,16 @@
         "issues": "https://github.com/linked-swissbib/adapterElasticsearch/issues/"
     },
     "require": {
-        "php": ">=7.0",
-        "elasticsearch/elasticsearch": "6.7.2",
-        "ongr/elasticsearch-dsl": "6.0.3",
+        "php": ">=7.1",
+        "elasticsearch/elasticsearch": "7.3.0",
+        "ongr/elasticsearch-dsl": "7.0.0",
         "monolog/monolog": "^1.21"
     },
     "require-dev": {
         "phpunit/phpunit": "5.6.*",
         "symfony/yaml": "3.1.*",
-        "elasticsearch/elasticsearch": "6.7.2",
-        "ongr/elasticsearch-dsl": "6.0.3",
+        "elasticsearch/elasticsearch": "7.3.0",
+        "ongr/elasticsearch-dsl": "7.0.0",
         "monolog/monolog": "^1.21"
     },
     "autoload": {
