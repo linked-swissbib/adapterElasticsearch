@@ -193,6 +193,20 @@ class TemplateSearch implements Search
      */
     public function toArray() : array
     {
+        /*
+         * GH: It's a really nasty hack...
+         * I don't know why the search configuration is using a list for the
+         * definition of types (only in some cases)
+         * I guess this is a mistake but the effort to test and evaluate it
+         * more seriously seems to be too high for me -
+         * not at least because the aim of our implementation is
+         * to use the refactored upcoming
+         * data.swissbib.ch interface for accessing linked data
+         */
+        if (is_array($this->type) && count($this->type) > 0) {
+            $this->type = $this->type[0];
+        }
+
         $search = [
             'track_total_hits' =>  true,
 
