@@ -402,7 +402,7 @@ class TemplateQuery implements Query
      */
     protected function fixValuesArray($values)
     {
-        if ($values !== null && count($values === 1) && is_array($values[0])) {
+        if ($values !== null && is_array($values) && count($values) === 1 && is_array($values[0])) {
             $values = $values[0];
         }
         return $values;
